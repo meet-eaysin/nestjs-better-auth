@@ -2,13 +2,19 @@
   "version": 2,
   "buildCommand": "yarn run build",
   "outputDirectory": "dist",
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "dist/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/lambda/server.ts"
+      "destination": "/api/index.ts"
     }
   ]
 }
+
 
 
 
