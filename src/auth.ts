@@ -15,6 +15,10 @@ export const auth: any = betterAuth({
     trustedOrigins: ["*"],
     baseURL,
     basePath: "/api/auth",
+    advanced: {
+        trustHost: true,
+        useSecureCookies: process.env.NODE_ENV === "production"
+    },
     plugins: [
         bearer(),
         admin()
