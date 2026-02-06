@@ -132,20 +132,31 @@ export class AuthModule
 		const handler = toNodeHandler(this.options.auth);
 		this.adapter.httpAdapter
 			.getInstance()
-			.use(basePath, async (req: Request, res: Response, next: () => void) => {
-				// better-auth needs the full path including basePath to match its internal routes
-				const originalUrl = req.url;
-				req.url = req.originalUrl;
+			.use(async (req: Request, res: Response, next: () => void) => {
+				if (!req.url.startsWith(basePath)) {
+					return next();
+				}
+
+				this.logger.log(`[DEBUG] Auth Middleware - Path: ${req.url}, Original: ${req.originalUrl}`);
+				
+				// Ensure better-auth sees the path it expects (including basePath if configured)
+				// We try to be smart here: if basePath is /api/auth and req.url is /session, we restore it.
+				const originalPath = req.url;
+				if (!req.url.startsWith(basePath) && req.originalUrl.startsWith(basePath)) {
+					req.url = req.originalUrl;
+				}
 				
 				try {
+					this.logger.log(`[DEBUG] Calling Better Auth handler for: ${req.url}`);
 					if (this.options.middleware) {
 						await this.options.middleware(req, res, () => handler(req, res));
 					} else {
 						await handler(req, res);
 					}
+					this.logger.log(`[DEBUG] Better Auth handler finished with status: ${res.statusCode}`);
 				} catch (error) {
 					this.logger.error('Better Auth Handler Error:', error);
-					req.url = originalUrl; // Restore for next handlers if error
+					req.url = originalPath;
 					next();
 				}
 			});
