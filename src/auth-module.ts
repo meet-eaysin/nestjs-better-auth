@@ -62,7 +62,20 @@ export class AuthModule
 		super();
 	}
 
-	onModuleInit(): void {
+	async onModuleInit() {
+		this.logger.log(`[DEBUG] Initializing AuthModule. basePath: ${this.options.auth.options.basePath || '/api/auth'}, baseURL: ${this.options.auth.options.baseURL}`);
+		
+		try {
+			if (this.options.auth.db && typeof this.options.auth.db.sync === 'function') {
+				this.logger.log('[DEBUG] Syncing database schema...');
+				await this.options.auth.db.sync();
+				this.logger.log('[DEBUG] Database schema synced successfully.');
+			}
+		} catch (dbError) {
+			this.logger.error('[ERROR] Failed to sync database schema:', dbError);
+		}
+
+		const { discoveryService, metadataScanner } = this;
 		const providers = this.discoveryService
 			.getProviders()
 			.filter(
@@ -133,29 +146,37 @@ export class AuthModule
 		this.adapter.httpAdapter
 			.getInstance()
 			.use(async (req: Request, res: Response, next: () => void) => {
-				if (!req.url.startsWith(basePath)) {
+				const isAuthPath = req.url.startsWith(basePath) || req.originalUrl.startsWith(basePath);
+				
+				if (!isAuthPath) {
 					return next();
 				}
 
-				this.logger.log(`[DEBUG] Auth Middleware - Path: ${req.url}, Original: ${req.originalUrl}`);
+				this.logger.log(`[DEBUG] Auth Request - Path: ${req.url}, Original: ${req.originalUrl}, BasePath: ${basePath}`);
 				
-				// Ensure better-auth sees the path it expects (including basePath if configured)
-				// We try to be smart here: if basePath is /api/auth and req.url is /session, we restore it.
 				const originalPath = req.url;
+				// In some environments, req.url might have basePath stripped. Restore it if needed.
 				if (!req.url.startsWith(basePath) && req.originalUrl.startsWith(basePath)) {
 					req.url = req.originalUrl;
+					this.logger.log(`[DEBUG] Restored req.url to: ${req.url}`);
 				}
 				
 				try {
-					this.logger.log(`[DEBUG] Calling Better Auth handler for: ${req.url}`);
+					this.logger.log(`[DEBUG] Dispatching to Better Auth handler for: ${req.url}`);
 					if (this.options.middleware) {
 						await this.options.middleware(req, res, () => handler(req, res));
 					} else {
 						await handler(req, res);
 					}
-					this.logger.log(`[DEBUG] Better Auth handler finished with status: ${res.statusCode}`);
+					
+					// Log the result if we didn't send a response yet (or if common headers are present)
+					if (!res.writableEnded) {
+						this.logger.log(`[DEBUG] Handler finished but response not ended. Status: ${res.statusCode}`);
+					} else {
+						this.logger.log(`[DEBUG] Handler response sent. Status: ${res.statusCode}`);
+					}
 				} catch (error) {
-					this.logger.error('Better Auth Handler Error:', error);
+					this.logger.error('[ERROR] Better Auth Handler Exception:', error);
 					req.url = originalPath;
 					next();
 				}
