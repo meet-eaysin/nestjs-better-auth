@@ -66,8 +66,13 @@ export class AuthModule
 		this.logger.log(`[DEBUG] Initializing AuthModule. basePath: ${this.options.auth.options.basePath || '/api/auth'}, baseURL: ${this.options.auth.options.baseURL}`);
 		
 		try {
-			const routes = Object.keys(this.options.auth.api || {}).join(', ');
-			this.logger.log(`[DEBUG] Registered Better Auth Routes: ${routes}`);
+			// Log configuration to verify it's what we expect in production
+			this.logger.log(`[DEBUG] Auth Config - baseURL: ${this.options.auth.options.baseURL}, basePath: ${this.options.auth.options.basePath}`);
+			this.logger.log(`[DEBUG] Auth Config - trustHost: ${this.options.auth.options.advanced?.trustHost}, secret: ${!!this.options.auth.options.secret}`);
+			
+			// Inspect internal API structure
+			const apiKeys = Object.keys(this.options.auth.api || {});
+			this.logger.log(`[DEBUG] Registered Internal API Routes (${apiKeys.length}): ${apiKeys.slice(0, 10).join(', ')}${apiKeys.length > 10 ? '...' : ''}`);
 			
 			if (this.options.auth.db && typeof this.options.auth.db.sync === 'function') {
 				this.logger.log('[DEBUG] Syncing database schema...');
@@ -155,28 +160,36 @@ export class AuthModule
 					return next();
 				}
 
-				this.logger.log(`[DEBUG] Auth Request - Path: ${req.url}, Original: ${req.originalUrl}, Method: ${req.method}`);
-				this.logger.log(`[DEBUG] Request Headers: ${JSON.stringify(req.headers)}`);
-				this.logger.log(`[DEBUG] Auth Instance - baseURL: ${this.options.auth.options.baseURL}, basePath: ${this.options.auth.options.basePath}, trustHost: ${this.options.auth.options.advanced?.trustHost}`);
+				this.logger.log(`[DEBUG] Incoming Request - Method: ${req.method}, Path: ${req.url}, Original: ${req.originalUrl}`);
+				this.logger.log(`[DEBUG] Protocol: ${req.protocol}, Secure: ${req.secure}, X-Proto: ${req.headers['x-forwarded-proto']}`);
 				
 				const originalPath = req.url;
-				// In some environments, req.url might have basePath stripped. Restore it if needed.
+				
+				// Ensure req.url starts with basePath for Better Auth matching
 				if (!req.url.startsWith(basePath) && req.originalUrl.startsWith(basePath)) {
 					req.url = req.originalUrl;
-					this.logger.log(`[DEBUG] Restored req.url to: ${req.url}`);
+					this.logger.log(`[DEBUG] Normalized req.url to: ${req.url}`);
 				}
 				
 				try {
-					this.logger.log(`[DEBUG] Handing over to Better Auth...`);
+					this.logger.log(`[DEBUG] Executing Better Auth handler...`);
 					if (this.options.middleware) {
 						await this.options.middleware(req, res, () => handler(req, res));
 					} else {
 						await handler(req, res);
 					}
 					
-					this.logger.log(`[DEBUG] Better Auth finished. Status: ${res.statusCode}, Ended: ${res.writableEnded}`);
+					this.logger.log(`[DEBUG] Better Auth Status: ${res.statusCode}, Ended: ${res.writableEnded}`);
+					
+					// If still 404, troubleshoot why
+					if (res.statusCode === 404 && !res.writableEnded) {
+						this.logger.warn(`[DEBUG] Request for ${req.url} returned 404. Checking for common pitfalls...`);
+						if (this.options.auth.options.baseURL.endsWith('/') && !req.url.startsWith('/')) {
+							this.logger.warn('[DEBUG] Potential slash mismatch between baseURL and req.url');
+						}
+					}
 				} catch (error) {
-					this.logger.error('[ERROR] Better Auth implementation failed:', error);
+					this.logger.error('[ERROR] Better Auth Handler Exception:', error);
 					req.url = originalPath;
 					next();
 				}
