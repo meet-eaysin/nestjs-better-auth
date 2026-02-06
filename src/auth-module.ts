@@ -66,14 +66,6 @@ export class AuthModule
 		this.logger.log(`[DEBUG] Initializing AuthModule. basePath: ${this.options.auth.options.basePath || '/api/auth'}, baseURL: ${this.options.auth.options.baseURL}`);
 		
 		try {
-			// Log configuration to verify it's what we expect in production
-			this.logger.log(`[DEBUG] Auth Config - baseURL: ${this.options.auth.options.baseURL}, basePath: ${this.options.auth.options.basePath}`);
-			this.logger.log(`[DEBUG] Auth Config - trustHost: ${this.options.auth.options.advanced?.trustHost}, secret: ${!!this.options.auth.options.secret}`);
-			
-			// Inspect internal API structure - Log ALL routes to be absolutely sure
-			const apiKeys = Object.keys(this.options.auth.api || {});
-			this.logger.log(`[DEBUG] Registered Internal API Routes (${apiKeys.length}): ${apiKeys.join(', ')}`);
-			
 			if (this.options.auth.db && typeof this.options.auth.db.sync === 'function') {
 				this.logger.log('[DEBUG] Syncing database schema...');
 				await this.options.auth.db.sync();
@@ -161,6 +153,11 @@ export class AuthModule
 				}
 
 				this.logger.log(`[DEBUG] Incoming Request - Method: ${req.method}, Path: ${req.url}, Original: ${req.originalUrl}`);
+				
+				// Log internal routes on every request for debugging
+				const apiKeys = Object.keys(this.options.auth.api || {});
+				this.logger.log(`[DEBUG] Registered Better Auth Routes: ${apiKeys.join(', ')}`);
+				
 				this.logger.log(`[DEBUG] Protocol: ${req.protocol}, Secure: ${req.secure}, X-Proto: ${req.headers['x-forwarded-proto']}`);
 				
 				const originalPath = req.url;

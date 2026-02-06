@@ -9,6 +9,7 @@ const baseURL = process.env.BETTER_AUTH_URL ||
 
 export const auth: any = betterAuth({
     database: new Database(":memory:"),
+    secret: process.env.BETTER_AUTH_SECRET,
     emailAndPassword: {
         enabled: true
     },
