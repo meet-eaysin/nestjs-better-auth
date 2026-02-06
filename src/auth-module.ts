@@ -132,11 +132,22 @@ export class AuthModule
 		const handler = toNodeHandler(this.options.auth);
 		this.adapter.httpAdapter
 			.getInstance()
-			.use(basePath, (req: Request, res: Response) => {
-				if (this.options.middleware) {
-					return this.options.middleware(req, res, () => handler(req, res));
+			.use(basePath, async (req: Request, res: Response, next: () => void) => {
+				// better-auth needs the full path including basePath to match its internal routes
+				const originalUrl = req.url;
+				req.url = req.originalUrl;
+				
+				try {
+					if (this.options.middleware) {
+						await this.options.middleware(req, res, () => handler(req, res));
+					} else {
+						await handler(req, res);
+					}
+				} catch (error) {
+					this.logger.error('Better Auth Handler Error:', error);
+					req.url = originalUrl; // Restore for next handlers if error
+					next();
 				}
-				return handler(req, res);
 			});
 		this.logger.log(`AuthModule initialized BetterAuth on '${basePath}'`);
 	}

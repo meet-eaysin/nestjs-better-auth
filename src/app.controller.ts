@@ -1,8 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
-import { Session, UserSession } from './index.js';
+import { Session, UserSession, Public } from './index.js';
 
 @Controller()
 export class AppController {
+  @Public()
   @Get()
   getHello() {
     return { 
@@ -14,11 +15,13 @@ export class AppController {
     };
   }
 
+  @Public()
   @Get('protected')
   getProtected(@Session() session: UserSession) {
     return {
-        message: "You are authenticated!",
+        message: "You are authenticated (or this is public)!",
         session: session || "No session found"
     };
   }
 }
+

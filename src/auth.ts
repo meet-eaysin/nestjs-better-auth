@@ -1,10 +1,18 @@
 import { betterAuth } from "better-auth";
 import Database from "better-sqlite3";
+import { bearer } from "better-auth/plugins/bearer";
+import { admin } from "better-auth/plugins/admin";
 
-export const auth = betterAuth({
-    database: new Database(":memory:"),
+export const auth: any = betterAuth({
+    database: new Database("auth.db"),
     emailAndPassword: {
         enabled: true
     },
-    trustedOrigins: ["*"]
-} as any);
+    trustedOrigins: ["*"],
+    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+    basePath: "/api/auth",
+    plugins: [
+        bearer(),
+        admin()
+    ]
+});
