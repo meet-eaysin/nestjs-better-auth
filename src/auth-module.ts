@@ -185,14 +185,26 @@ export class AuthModule
 				
 				const originalPath = req.url;
 				
-				// Ensure req.url starts with basePath for Better Auth matching
-				if (!req.url.startsWith(basePath) && req.originalUrl.startsWith(basePath)) {
+				// Normalization Layer: Map standard paths to discovered internal paths
+				// This fixes the 404 because Better Auth expects /get-session but browser sends /session
+				const normalizationMap: Record<string, string> = {
+					[`${basePath}/session`]: `${basePath}/get-session`,
+					[`${basePath}/sign-in`]: `${basePath}/sign-in/email`,
+					[`${basePath}/sign-up`]: `${basePath}/sign-up/email`,
+					[`${basePath}/sign-out`]: `${basePath}/sign-out`,
+				};
+
+				const normalizedPath = normalizationMap[req.url] || normalizationMap[req.originalUrl];
+				if (normalizedPath) {
+					this.logger.log(`[DEBUG] Normalizing ${req.url} -> ${normalizedPath}`);
+					req.url = normalizedPath;
+				} else if (!req.url.startsWith(basePath) && req.originalUrl.startsWith(basePath)) {
 					req.url = req.originalUrl;
-					this.logger.log(`[DEBUG] Normalized req.url to: ${req.url}`);
+					this.logger.log(`[DEBUG] Restoring req.url to: ${req.url}`);
 				}
 				
 				try {
-					this.logger.log(`[DEBUG] Executing Better Auth handler...`);
+					this.logger.log(`[DEBUG] Executing Better Auth handler for: ${req.url}`);
 					if (this.options.middleware) {
 						await this.options.middleware(req, res, () => handler(req, res));
 					} else {
