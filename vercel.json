@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "yarn run build",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/(.*)",
@@ -7,4 +9,5 @@
     }
   ]
 }
+
 
