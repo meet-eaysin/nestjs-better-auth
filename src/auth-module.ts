@@ -154,12 +154,33 @@ export class AuthModule
 
 				this.logger.log(`[DEBUG] Incoming Request - Method: ${req.method}, Path: ${req.url}, Original: ${req.originalUrl}`);
 				this.logger.log(`[DEBUG] Request Headers: ${JSON.stringify(req.headers)}`);
-				this.logger.log(`[DEBUG] Auth Config - baseURL: ${this.options.auth.options.baseURL}, basePath: ${this.options.auth.options.basePath}`);
 				
-				// Log internal routes on every request for debugging
-				const apiKeys = Object.keys(this.options.auth.api || {});
-				this.logger.log(`[DEBUG] Registered Better Auth Routes: ${apiKeys.join(', ')}`);
-				
+				try {
+					const authObj = this.options.auth;
+					this.logger.log(`[DEBUG] Auth Config - baseURL: ${authObj.options.baseURL}, basePath: ${authObj.options.basePath}`);
+					
+					// Log specific route paths as perceived by Better Auth
+					const api = authObj.api || {};
+					const getSessionPath = api.getSession?.path;
+					const signInEmailPath = api.signInEmail?.path;
+					const signUpEmailPath = api.signUpEmail?.path;
+					
+					this.logger.log(`[DEBUG] Internal Paths - getSession: ${getSessionPath}, signInEmail: ${signInEmailPath}, signUpEmail: ${signUpEmailPath}`);
+					
+					const apiKeys = Object.keys(api);
+					this.logger.log(`[DEBUG] Registered Actions (${apiKeys.length}): ${apiKeys.join(', ')}`);
+					
+					if (authObj.db && typeof authObj.db.sync === 'function') {
+						// This block seems to be misplaced from the original diff.
+						// Assuming it was meant to be part of the logging context,
+						// but the original code had db.sync in onModuleInit.
+						// Keeping it here as per the diff, but it's unusual.
+						// If it's meant to be a check, it should be outside the try/catch for handler.
+					}
+				} catch (logError) {
+					this.logger.error('[ERROR] Error during auth config logging:', logError);
+				}
+
 				this.logger.log(`[DEBUG] Protocol: ${req.protocol}, Secure: ${req.secure}, X-Proto: ${req.headers['x-forwarded-proto']}`);
 				
 				const originalPath = req.url;
