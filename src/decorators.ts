@@ -1,8 +1,8 @@
 import { SetMetadata, createParamDecorator } from "@nestjs/common";
 import type { CustomDecorator, ExecutionContext } from "@nestjs/common";
 import type { createAuthMiddleware } from "better-auth/api";
-import { AFTER_HOOK_KEY, BEFORE_HOOK_KEY, HOOK_KEY } from "./symbols.ts";
-import { getRequestFromContext } from "./utils.ts";
+import { AFTER_HOOK_KEY, BEFORE_HOOK_KEY, HOOK_KEY } from "./symbols.js";
+import { getRequestFromContext } from "./utils.js";
 
 /**
  * Allows unauthenticated (anonymous) access to a route or controller.

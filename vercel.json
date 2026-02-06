@@ -1,5 +1,10 @@
 {
-	"buildCommand": "yarn install && yarn run build",
-	"outputDirectory": "dist"
-
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.ts"
+    }
+  ]
 }
+

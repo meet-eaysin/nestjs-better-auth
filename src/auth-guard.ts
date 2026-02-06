@@ -15,8 +15,8 @@ import { fromNodeHeaders } from "better-auth/node";
 import {
 	type AuthModuleOptions,
 	MODULE_OPTIONS_TOKEN,
-} from "./auth-module-definition.ts";
-import { getRequestFromContext } from "./utils.ts";
+} from "./auth-module-definition.js";
+import { getRequestFromContext } from "./utils.js";
 import { GraphQLError, GraphQLErrorOptions } from "graphql";
 
 /**

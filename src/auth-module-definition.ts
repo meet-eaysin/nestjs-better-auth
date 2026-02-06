@@ -1,5 +1,5 @@
 import { ConfigurableModuleBuilder } from "@nestjs/common";
-import type { Auth } from "./auth-module.ts";
+import type { Auth } from "./auth-module.js";
 import type { Request, Response, NextFunction } from "express";
 
 export type AuthModuleOptions<A = Auth> = {

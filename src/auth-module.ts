@@ -20,11 +20,11 @@ import {
 	ConfigurableModuleClass,
 	MODULE_OPTIONS_TOKEN,
 	type OPTIONS_TYPE,
-} from "./auth-module-definition.ts";
-import { AuthService } from "./auth-service.ts";
-import { SkipBodyParsingMiddleware } from "./middlewares.ts";
-import { AFTER_HOOK_KEY, BEFORE_HOOK_KEY, HOOK_KEY } from "./symbols.ts";
-import { AuthGuard } from "./auth-guard.ts";
+} from "./auth-module-definition.js";
+import { AuthService } from "./auth-service.js";
+import { SkipBodyParsingMiddleware } from "./middlewares.js";
+import { AFTER_HOOK_KEY, BEFORE_HOOK_KEY, HOOK_KEY } from "./symbols.js";
+import { AuthGuard } from "./auth-guard.js";
 import { APP_GUARD } from "@nestjs/core";
 
 const HOOKS = [

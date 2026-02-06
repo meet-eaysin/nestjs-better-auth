@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth-module.ts';
-import { auth } from './auth.ts';
-import { AppController } from './app.controller.ts';
+import { AuthModule } from './auth-module.js';
+import { auth } from './auth.js';
+import { AppController } from './app.controller.js';
 
 @Module({
   imports: [

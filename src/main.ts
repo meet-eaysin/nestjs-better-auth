@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module.ts';
+import { AppModule } from './app.module.js';
 import { ExpressAdapter } from '@nestjs/platform-express';
 
 async function bootstrap() {

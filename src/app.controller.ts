@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { Session, UserSession } from './index.ts';
+import { Session, UserSession } from './index.js';
 
 @Controller()
 export class AppController {
