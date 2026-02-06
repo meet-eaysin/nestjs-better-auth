@@ -153,6 +153,8 @@ export class AuthModule
 				}
 
 				this.logger.log(`[DEBUG] Incoming Request - Method: ${req.method}, Path: ${req.url}, Original: ${req.originalUrl}`);
+				this.logger.log(`[DEBUG] Request Headers: ${JSON.stringify(req.headers)}`);
+				this.logger.log(`[DEBUG] Auth Config - baseURL: ${this.options.auth.options.baseURL}, basePath: ${this.options.auth.options.basePath}`);
 				
 				// Log internal routes on every request for debugging
 				const apiKeys = Object.keys(this.options.auth.api || {});
