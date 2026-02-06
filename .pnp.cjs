@@ -51,6 +51,7 @@ const RAW_RUNTIME_STATE =
           ["socket.io", "npm:4.8.3"],\
           ["socket.io-client", "npm:4.8.3"],\
           ["supertest", "npm:7.2.2"],\
+          ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
           ["unbuild", "virtual:c06aa05b38e94589d2c378dda3b0c78f8672782d9914f26a888bab6386746e761d687e8e00ae2907599fe173696b5c606e44588241724a8aa9a6bfbd708582b1#npm:3.6.1"],\
           ["unplugin-swc", "virtual:c06aa05b38e94589d2c378dda3b0c78f8672782d9914f26a888bab6386746e761d687e8e00ae2907599fe173696b5c606e44588241724a8aa9a6bfbd708582b1#npm:1.5.9"],\
           ["vitest", "virtual:c06aa05b38e94589d2c378dda3b0c78f8672782d9914f26a888bab6386746e761d687e8e00ae2907599fe173696b5c606e44588241724a8aa9a6bfbd708582b1#npm:3.2.4"]\
@@ -2584,6 +2585,7 @@ const RAW_RUNTIME_STATE =
           ["socket.io", "npm:4.8.3"],\
           ["socket.io-client", "npm:4.8.3"],\
           ["supertest", "npm:7.2.2"],\
+          ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
           ["unbuild", "virtual:c06aa05b38e94589d2c378dda3b0c78f8672782d9914f26a888bab6386746e761d687e8e00ae2907599fe173696b5c606e44588241724a8aa9a6bfbd708582b1#npm:3.6.1"],\
           ["unplugin-swc", "virtual:c06aa05b38e94589d2c378dda3b0c78f8672782d9914f26a888bab6386746e761d687e8e00ae2907599fe173696b5c606e44588241724a8aa9a6bfbd708582b1#npm:1.5.9"],\
           ["vitest", "virtual:c06aa05b38e94589d2c378dda3b0c78f8672782d9914f26a888bab6386746e761d687e8e00ae2907599fe173696b5c606e44588241724a8aa9a6bfbd708582b1#npm:3.2.4"]\
@@ -6332,7 +6334,7 @@ const RAW_RUNTIME_STATE =
           ["sass", null],\
           ["semver", "npm:7.7.4"],\
           ["tinyglobby", "npm:0.2.15"],\
-          ["typescript", null],\
+          ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
           ["vue", null],\
           ["vue-sfc-transformer", null],\
           ["vue-tsc", null]\
@@ -7707,7 +7709,7 @@ const RAW_RUNTIME_STATE =
           ["magic-string", "npm:0.30.21"],\
           ["rollup", "npm:4.57.1"],\
           ["rollup-plugin-dts", "virtual:fa9ff58e91d8f3ae92d7244e84f8f36bf8e60ecee4a5cd7555d033f44e877c9cf623aa13e89785e3be3bf34b685e871dc105f6e4e0b7eeb5e2804407f24bd4c3#npm:6.3.0"],\
-          ["typescript", null]\
+          ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"]\
         ],\
         "packagePeers": [\
           "@types/rollup",\
@@ -8631,6 +8633,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["typescript", [\
+      ["patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5", {\
+        "packageLocation": "../../../.yarn/berry/cache/typescript-patch-6fda4d02cf-10c0.zip/node_modules/typescript/",\
+        "packageDependencies": [\
+          ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["ufo", [\
       ["npm:1.6.3", {\
         "packageLocation": "../../../.yarn/berry/cache/ufo-npm-1.6.3-29bac69d97-10c0.zip/node_modules/ufo/",\
@@ -8684,7 +8695,7 @@ const RAW_RUNTIME_STATE =
           ["rollup-plugin-dts", "virtual:fa9ff58e91d8f3ae92d7244e84f8f36bf8e60ecee4a5cd7555d033f44e877c9cf623aa13e89785e3be3bf34b685e871dc105f6e4e0b7eeb5e2804407f24bd4c3#npm:6.3.0"],\
           ["scule", "npm:1.3.0"],\
           ["tinyglobby", "npm:0.2.15"],\
-          ["typescript", null],\
+          ["typescript", "patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"],\
           ["unbuild", "virtual:c06aa05b38e94589d2c378dda3b0c78f8672782d9914f26a888bab6386746e761d687e8e00ae2907599fe173696b5c606e44588241724a8aa9a6bfbd708582b1#npm:3.6.1"],\
           ["untyped", "npm:2.0.0"]\
         ],\

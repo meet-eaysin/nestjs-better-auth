@@ -53,6 +53,7 @@
 		"socket.io": "^4.8.1",
 		"socket.io-client": "^4.8.1",
 		"supertest": "^7.1.4",
+		"typescript": "^5.9.3",
 		"unbuild": "^3.6.1",
 		"unplugin-swc": "^1.5.7",
 		"vitest": "^3.2.4"
