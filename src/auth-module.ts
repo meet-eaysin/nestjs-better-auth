@@ -70,9 +70,9 @@ export class AuthModule
 			this.logger.log(`[DEBUG] Auth Config - baseURL: ${this.options.auth.options.baseURL}, basePath: ${this.options.auth.options.basePath}`);
 			this.logger.log(`[DEBUG] Auth Config - trustHost: ${this.options.auth.options.advanced?.trustHost}, secret: ${!!this.options.auth.options.secret}`);
 			
-			// Inspect internal API structure
+			// Inspect internal API structure - Log ALL routes to be absolutely sure
 			const apiKeys = Object.keys(this.options.auth.api || {});
-			this.logger.log(`[DEBUG] Registered Internal API Routes (${apiKeys.length}): ${apiKeys.slice(0, 10).join(', ')}${apiKeys.length > 10 ? '...' : ''}`);
+			this.logger.log(`[DEBUG] Registered Internal API Routes (${apiKeys.length}): ${apiKeys.join(', ')}`);
 			
 			if (this.options.auth.db && typeof this.options.auth.db.sync === 'function') {
 				this.logger.log('[DEBUG] Syncing database schema...');
