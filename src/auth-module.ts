@@ -152,7 +152,9 @@ export class AuthModule
 					return next();
 				}
 
-				this.logger.log(`[DEBUG] Auth Request - Path: ${req.url}, Original: ${req.originalUrl}, BasePath: ${basePath}`);
+				this.logger.log(`[DEBUG] Auth Request - Path: ${req.url}, Original: ${req.originalUrl}, Method: ${req.method}`);
+				this.logger.log(`[DEBUG] Request Headers: ${JSON.stringify(req.headers)}`);
+				this.logger.log(`[DEBUG] Auth Instance - baseURL: ${this.options.auth.options.baseURL}, basePath: ${this.options.auth.options.basePath}`);
 				
 				const originalPath = req.url;
 				// In some environments, req.url might have basePath stripped. Restore it if needed.
@@ -162,21 +164,16 @@ export class AuthModule
 				}
 				
 				try {
-					this.logger.log(`[DEBUG] Dispatching to Better Auth handler for: ${req.url}`);
+					this.logger.log(`[DEBUG] Handing over to Better Auth...`);
 					if (this.options.middleware) {
 						await this.options.middleware(req, res, () => handler(req, res));
 					} else {
 						await handler(req, res);
 					}
 					
-					// Log the result if we didn't send a response yet (or if common headers are present)
-					if (!res.writableEnded) {
-						this.logger.log(`[DEBUG] Handler finished but response not ended. Status: ${res.statusCode}`);
-					} else {
-						this.logger.log(`[DEBUG] Handler response sent. Status: ${res.statusCode}`);
-					}
+					this.logger.log(`[DEBUG] Better Auth finished. Status: ${res.statusCode}, Ended: ${res.writableEnded}`);
 				} catch (error) {
-					this.logger.error('[ERROR] Better Auth Handler Exception:', error);
+					this.logger.error('[ERROR] Better Auth implementation failed:', error);
 					req.url = originalPath;
 					next();
 				}
