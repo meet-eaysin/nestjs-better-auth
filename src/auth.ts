@@ -4,7 +4,7 @@ import { bearer } from "better-auth/plugins/bearer";
 import { admin } from "better-auth/plugins/admin";
 
 export const auth: any = betterAuth({
-    database: new Database("auth.db"),
+    database: new Database(":memory:"),
     emailAndPassword: {
         enabled: true
     },

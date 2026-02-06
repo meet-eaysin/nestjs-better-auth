@@ -6,18 +6,24 @@ import express from 'express';
 
 const server = express();
 
-export default async (req: any, res: any) => {
-  const app = await NestFactory.create(
-    AppModule,
-    new ExpressAdapter(server),
-    { bodyParser: false }
-  );
-  
-  app.enableCors({
-    origin: '*',
-    credentials: true,
-  });
+let cachedApp: any;
 
-  await app.init();
-  server(req, res);
+export default async (req: any, res: any) => {
+  if (!cachedApp) {
+    const app = await NestFactory.create(
+      AppModule,
+      new ExpressAdapter(server),
+      { bodyParser: false }
+    );
+    
+    app.enableCors({
+      origin: '*',
+      credentials: true,
+    });
+
+    await app.init();
+    cachedApp = server;
+  }
+  
+  cachedApp(req, res);
 };
