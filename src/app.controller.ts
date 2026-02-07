@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
-import { Session, UserSession, Public } from './index.js';
+import { Session, UserSession, Public, AllowAnonymous } from './index.js';
 
 @Controller()
 export class AppController {
-  @Public()
+  @AllowAnonymous()
   @Get()
   getHello() {
     return { 
@@ -15,7 +15,7 @@ export class AppController {
     };
   }
 
-  @Public()
+  @AllowAnonymous()
   @Get('protected')
   getProtected(@Session() session: UserSession) {
     return {

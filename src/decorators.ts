@@ -5,28 +5,22 @@ import { AFTER_HOOK_KEY, BEFORE_HOOK_KEY, HOOK_KEY } from "./symbols.js";
 import { getRequestFromContext } from "./utils.js";
 
 /**
- * Allows unauthenticated (anonymous) access to a route or controller.
- * When applied, the AuthGuard will not perform authentication checks.
+ * Allows unauthenticated access to a route.
  */
 export const AllowAnonymous = (): CustomDecorator<string> =>
-	SetMetadata("PUBLIC", true);
+  SetMetadata("PUBLIC", true);
 
 /**
- * Marks a route or controller as having optional authentication.
- * When applied, the AuthGuard allows the request to proceed
- * even if no session is present.
+ * Allows the request to proceed even if no session is present.
  */
 export const OptionalAuth = (): CustomDecorator<string> =>
-	SetMetadata("OPTIONAL", true);
+  SetMetadata("OPTIONAL", true);
 
 /**
- * Specifies the roles required to access a route or controller.
- * The AuthGuard will check if the authenticated user's roles
- * include at least one of the specified roles.
- * @param roles - The roles required for access
+ * Specifies required roles for a route.
  */
 export const Roles = (roles: string[]): CustomDecorator =>
-	SetMetadata("ROLES", roles);
+  SetMetadata("ROLES", roles);
 
 /**
  * @deprecated Use AllowAnonymous() instead.
@@ -39,39 +33,34 @@ export const Public = AllowAnonymous;
 export const Optional = OptionalAuth;
 
 /**
- * Parameter decorator that extracts the user session from the request.
- * Provides easy access to the authenticated user's session data in controller methods.
- * Works with both HTTP and GraphQL execution contexts.
+ * Extracts the user session from the request.
+ * Works with HTTP, GraphQL, and WebSocket.
  */
 export const Session: ReturnType<typeof createParamDecorator> =
-	createParamDecorator((_data: unknown, context: ExecutionContext): unknown => {
-		const request = getRequestFromContext(context);
-		return request.session;
-	});
+  createParamDecorator((_data: unknown, context: ExecutionContext) => {
+    const request = getRequestFromContext(context);
+    return request.session;
+  });
 /**
- * Represents the context object passed to hooks.
- * This type is derived from the parameters of the createAuthMiddleware function.
+ * Context object passed to hooks.
  */
 export type AuthHookContext = Parameters<
-	Parameters<typeof createAuthMiddleware>[0]
+  Parameters<typeof createAuthMiddleware>[0]
 >[0];
 
 /**
- * Registers a method to be executed before a specific auth route is processed.
- * @param path - The auth route path that triggers this hook (must start with '/')
+ * Registers a method to execute before an auth route.
  */
 export const BeforeHook = (path?: `/${string}`): CustomDecorator<symbol> =>
-	SetMetadata(BEFORE_HOOK_KEY, path);
+  SetMetadata(BEFORE_HOOK_KEY, path);
 
 /**
- * Registers a method to be executed after a specific auth route is processed.
- * @param path - The auth route path that triggers this hook (must start with '/')
+ * Registers a method to execute after an auth route.
  */
 export const AfterHook = (path?: `/${string}`): CustomDecorator<symbol> =>
-	SetMetadata(AFTER_HOOK_KEY, path);
+  SetMetadata(AFTER_HOOK_KEY, path);
 
 /**
- * Class decorator that marks a provider as containing hook methods.
- * Must be applied to classes that use BeforeHook or AfterHook decorators.
+ * Marks a provider as containing hook methods.
  */
 export const Hook = (): ClassDecorator => SetMetadata(HOOK_KEY, true);

@@ -1,16 +1,15 @@
 import "reflect-metadata";
-import 'reflect-metadata';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module.js';
-import { ExpressAdapter } from '@nestjs/platform-express';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module.js";
+import { ExpressAdapter } from "@nestjs/platform-express";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(), {
     bodyParser: false,
   });
-  
+
   app.enableCors({
-    origin: '*',
+    origin: "*",
     credentials: true,
   });
 

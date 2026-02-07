@@ -1,15 +1,15 @@
-import { Module } from '@nestjs/common';
-import { AuthModule } from './auth-module.js';
-import { auth } from './auth.js';
-import { AppController } from './app.controller.js';
+import { Module } from "@nestjs/common";
+import { AuthModule } from "./auth-module.js";
+import { auth } from "./auth.js";
+import { AppController } from "./app.controller.js";
 
 @Module({
   imports: [
-    AuthModule.forRoot({ 
+    AuthModule.forRoot({
       auth,
-      disableGlobalAuthGuard: false 
-    })
+      disableGlobalAuthGuard: false,
+    }),
   ],
-  controllers: [AppController]
+  controllers: [AppController],
 })
 export class AppModule {}
