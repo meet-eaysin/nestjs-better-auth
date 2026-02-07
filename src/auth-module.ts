@@ -67,9 +67,11 @@ export class AuthModule
   }
 
   private async syncDatabase() {
-    const auth = this.options.auth as any;
+    const auth = this.options.auth as Auth & {
+      db?: { sync?: () => Promise<void> };
+    };
     try {
-      if (auth.db && typeof auth.db.sync === "function") {
+      if (auth.db?.sync && typeof auth.db.sync === "function") {
         await auth.db.sync();
       }
     } catch (dbError) {
@@ -154,58 +156,30 @@ export class AuthModule
     const handler = toNodeHandler(this.options.auth);
     this.adapter.httpAdapter
       .getInstance()
-      .use(async (req: any, res: any, next: (err?: any) => void) => {
-        const isAuthPath =
-          req.url.startsWith(basePath) || req.originalUrl.startsWith(basePath);
+      .use(
+        async (req: Request, res: Response, next: (err?: unknown) => void) => {
+          const isAuthPath =
+            req.url.startsWith(basePath) ||
+            req.originalUrl.startsWith(basePath);
 
-        if (!isAuthPath) {
-          return next();
-        }
-
-        const originalPath = req.url;
-
-        req.url =
-          this.normalizeAuthPath(req.url, basePath) ||
-          this.normalizeAuthPath(req.originalUrl, basePath) ||
-          req.url;
-
-        if (
-          !req.url.startsWith(basePath) &&
-          req.originalUrl.startsWith(basePath)
-        ) {
-          req.url = req.originalUrl;
-        }
-
-        try {
-          if (this.options.middleware) {
-            await this.options.middleware(req, res, () => handler(req, res));
-          } else {
-            await handler(req, res);
+          if (!isAuthPath) {
+            return next();
           }
-        } catch (error) {
-          this.logger.error("Better Auth Handler Exception:", error);
-          req.url = originalPath;
-          next(error);
-        }
-      });
+
+          try {
+            if (this.options.middleware) {
+              await this.options.middleware(req, res, () => handler(req, res));
+            } else {
+              await handler(req, res);
+            }
+          } catch (error) {
+            this.logger.error("Better Auth Handler Exception:", error);
+            next(error);
+          }
+        },
+      );
 
     this.logger.log(`AuthModule initialized BetterAuth on '${basePath}'`);
-  }
-
-  /**
-   * Normalizes standard auth paths to internal better-auth paths.
-   * This ensures that common endpoints (e.g., /session) are correctly routed
-   * to their internal equivalents (e.g., /get-session).
-   */
-  private normalizeAuthPath(url: string, basePath: string): string | null {
-    const normalizationMap: Record<string, string> = {
-      [`${basePath}/session`]: `${basePath}/get-session`,
-      [`${basePath}/sign-in`]: `${basePath}/sign-in/email`,
-      [`${basePath}/sign-up`]: `${basePath}/sign-up/email`,
-      [`${basePath}/sign-out`]: `${basePath}/sign-out`,
-    };
-
-    return normalizationMap[url] || null;
   }
 
   private setupHooks(
